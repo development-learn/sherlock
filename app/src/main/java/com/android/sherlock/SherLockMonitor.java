@@ -1,6 +1,8 @@
 package com.android.sherlock;
 
+import android.content.ContentResolver;
 import android.location.LocationManager;
+import android.provider.Settings;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -124,6 +126,25 @@ public class SherLockMonitor  implements IXposedHookLoadPackage {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) {
                         XposedBridge.log("调用getLastKnownLocation获取了GPS地址");
+                    }
+
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        XposedBridge.log(getMethodStack());
+                        super.afterHookedMethod(param);
+                    }
+                }
+        );
+        XposedHelpers.findAndHookMethod(
+                Settings.Secure.class.getName(),
+                lpparam.classLoader,
+                "getString",
+                ContentResolver.class,
+                String.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) {
+                        XposedBridge.log("调用android_id获取了GPS地址");
                     }
 
                     @Override
