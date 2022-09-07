@@ -149,7 +149,7 @@ public class SherLockMonitor implements IXposedHookLoadPackage {
 
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        if ("android_id".equals(param.args[2])) {
+                        if (param.args.length > 1 && "android_id".equals(param.args[1])) {
                             XposedBridge.log(getMethodStack());
                         }
                         super.afterHookedMethod(param);
