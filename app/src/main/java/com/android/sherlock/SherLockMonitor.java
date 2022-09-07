@@ -151,6 +151,7 @@ public class SherLockMonitor implements IXposedHookLoadPackage {
 
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        XposedBridge.log(getMethodStack());
                         super.afterHookedMethod(param);
                     }
                 }
