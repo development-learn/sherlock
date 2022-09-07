@@ -141,17 +141,16 @@ public class SherLockMonitor implements IXposedHookLoadPackage {
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) {
-                        if (param.args.length > 1 && "android_id".equals(param.args[1])) {
-                            XposedBridge.log("调用Secure.getString获取了android_id");
+                        StringBuffer sb = new StringBuffer();
+                        for (Object o : param.args) {
+                            sb.append(o.toString() + " && ");
                         }
+                        XposedBridge.log("调用Secure.getString,参数：" + sb.toString());
 
                     }
 
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        if (param.args.length > 1 && "android_id".equals(param.args[1])) {
-                            XposedBridge.log(getMethodStack());
-                        }
                         super.afterHookedMethod(param);
                     }
                 }
