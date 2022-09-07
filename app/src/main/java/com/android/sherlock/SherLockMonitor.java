@@ -12,27 +12,24 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 /**
  * 示例：
- *         XposedHelpers.findAndHookMethod(
- *                 "需要hook的方法所在类的完整类名",
- *                 lpparam.classLoader,      // 类加载器，固定这么写就行了
- *                 "需要hook的方法名",
- *                 参数类型.class,
- *                 new XC_MethodHook() {
- *                     @Override
- *                     protected void beforeHookedMethod(MethodHookParam param) {
- *                         XposedBridge.log("调用getDeviceId()获取了imei");
- *                     }
+ * XposedHelpers.findAndHookMethod(
+ * "需要hook的方法所在类的完整类名",
+ * lpparam.classLoader,      // 类加载器，固定这么写就行了
+ * "需要hook的方法名",
+ * 参数类型.class,
+ * new XC_MethodHook() {
  *
- *                     @Override
- *                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
- *                         XposedBridge.log(getMethodStack());
- *                         super.afterHookedMethod(param);
- *                     }
- *                 }
- *         );
- *
+ * @Override protected void beforeHookedMethod(MethodHookParam param) {
+ * XposedBridge.log("调用getDeviceId()获取了imei");
+ * }
+ * @Override protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+ * XposedBridge.log(getMethodStack());
+ * super.afterHookedMethod(param);
+ * }
+ * }
+ * );
  */
-public class SherLockMonitor  implements IXposedHookLoadPackage {
+public class SherLockMonitor implements IXposedHookLoadPackage {
 
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
 
@@ -144,12 +141,17 @@ public class SherLockMonitor  implements IXposedHookLoadPackage {
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) {
-                        XposedBridge.log("调用android_id获取了GPS地址");
+                        if (param.args.length > 1 && "android_id".equals(param.args[1])) {
+                            XposedBridge.log("调用Secure.getString获取了android_id");
+                        }
+
                     }
 
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        XposedBridge.log(getMethodStack());
+                        if ("android_id".equals(param.args[2])) {
+                            XposedBridge.log(getMethodStack());
+                        }
                         super.afterHookedMethod(param);
                     }
                 }
